@@ -1,11 +1,15 @@
 # Terraform
 .terraform/
 *.tfstate
-*.tfstate.backup
-.*erraform.lock.hcl
+*.tf*tate.*
+.terraform.lock.hcl
 
-# VS Code
-.vsco*e/
+# Terraform variable files (often contain secrets)
+*.tfvars
+*.tfvars.json
+
+# Crash logs
+crash.log
 
 # Logs
 *.log
