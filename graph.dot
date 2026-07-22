@@ -1,0 +1,55 @@
+digraph G {
+  rankdir = "RL";
+  node [shape = rect, fontname = "sans-serif"];
+  "azurerm_resource_group.main" [label="azurerm_resource_group.main"];
+  subgraph "cluster_module.compute" {
+    label = "module.compute"
+    fontname = "sans-serif"
+    "module.compute.azurerm_network_interface.nic" [label="azurerm_network_interface.nic"];
+    "module.compute.azurerm_public_ip.web" [label="azurerm_public_ip.web"];
+    "module.compute.azurerm_windows_virtual_machine.vm" [label="azurerm_windows_virtual_machine.vm"];
+  }
+  subgraph "cluster_module.keyvault" {
+    label = "module.keyvault"
+    fontname = "sans-serif"
+    "module.keyvault.data.azurerm_client_config.current" [label="data.azurerm_client_config.current"];
+    "module.keyvault.azurerm_key_vault.test_key_vault" [label="azurerm_key_vault.test_key_vault"];
+  }
+  subgraph "cluster_module.networking" {
+    label = "module.networking"
+    fontname = "sans-serif"
+    "module.networking.azurerm_network_security_group.db_test_nsg" [label="azurerm_network_security_group.db_test_nsg"];
+    "module.networking.azurerm_network_security_group.web_test_nsg" [label="azurerm_network_security_group.web_test_nsg"];
+    "module.networking.azurerm_subnet.app_subnet_test" [label="azurerm_subnet.app_subnet_test"];
+    "module.networking.azurerm_subnet.data_subnet_test" [label="azurerm_subnet.data_subnet_test"];
+    "module.networking.azurerm_subnet.web_subnet_test" [label="azurerm_subnet.web_subnet_test"];
+    "module.networking.azurerm_subnet_network_security_group_association.db_subnet_nsg" [label="azurerm_subnet_network_security_group_association.db_subnet_nsg"];
+    "module.networking.azurerm_subnet_network_security_group_association.web_subnet_nsg" [label="azurerm_subnet_network_security_group_association.web_subnet_nsg"];
+    "module.networking.azurerm_virtual_network.test" [label="azurerm_virtual_network.test"];
+  }
+  subgraph "cluster_module.storage" {
+    label = "module.storage"
+    fontname = "sans-serif"
+    "module.storage.azurerm_storage_account.test_storage" [label="azurerm_storage_account.test_storage"];
+    "module.storage.azurerm_storage_container.test_container" [label="azurerm_storage_container.test_container"];
+  }
+  "module.compute.azurerm_network_interface.nic" -> "module.compute.azurerm_public_ip.web";
+  "module.compute.azurerm_public_ip.web" -> "module.networking.azurerm_subnet.app_subnet_test";
+  "module.compute.azurerm_public_ip.web" -> "module.networking.azurerm_subnet_network_security_group_association.db_subnet_nsg";
+  "module.compute.azurerm_public_ip.web" -> "module.networking.azurerm_subnet_network_security_group_association.web_subnet_nsg";
+  "module.compute.azurerm_windows_virtual_machine.vm" -> "module.compute.azurerm_network_interface.nic";
+  "module.keyvault.azurerm_key_vault.test_key_vault" -> "azurerm_resource_group.main";
+  "module.keyvault.azurerm_key_vault.test_key_vault" -> "module.keyvault.data.azurerm_client_config.current";
+  "module.networking.azurerm_network_security_group.db_test_nsg" -> "azurerm_resource_group.main";
+  "module.networking.azurerm_network_security_group.web_test_nsg" -> "azurerm_resource_group.main";
+  "module.networking.azurerm_subnet.app_subnet_test" -> "module.networking.azurerm_virtual_network.test";
+  "module.networking.azurerm_subnet.data_subnet_test" -> "module.networking.azurerm_virtual_network.test";
+  "module.networking.azurerm_subnet.web_subnet_test" -> "module.networking.azurerm_virtual_network.test";
+  "module.networking.azurerm_subnet_network_security_group_association.db_subnet_nsg" -> "module.networking.azurerm_network_security_group.db_test_nsg";
+  "module.networking.azurerm_subnet_network_security_group_association.db_subnet_nsg" -> "module.networking.azurerm_subnet.data_subnet_test";
+  "module.networking.azurerm_subnet_network_security_group_association.web_subnet_nsg" -> "module.networking.azurerm_network_security_group.web_test_nsg";
+  "module.networking.azurerm_subnet_network_security_group_association.web_subnet_nsg" -> "module.networking.azurerm_subnet.web_subnet_test";
+  "module.networking.azurerm_virtual_network.test" -> "azurerm_resource_group.main";
+  "module.storage.azurerm_storage_account.test_storage" -> "azurerm_resource_group.main";
+  "module.storage.azurerm_storage_container.test_container" -> "module.storage.azurerm_storage_account.test_storage";
+}
