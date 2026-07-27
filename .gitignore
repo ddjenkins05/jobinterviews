@@ -16,3 +16,6 @@ crash.log
 
 # Graph
 *.dot
+
+# Backend configuration files
+*.backend
